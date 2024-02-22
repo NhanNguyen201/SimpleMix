@@ -38,6 +38,7 @@ export default {
     fragment: `
         uniform sampler2D uTexture1; 
         uniform sampler2D uTexture2; 
+        uniform sampler2D uMap; 
 
         uniform float uTime;
 
@@ -50,25 +51,31 @@ export default {
         void main() {
 
             float wave = vWave * 0.45; // 0.45
+            float line = 0.;
+            float lineEdge = 0.05;
+
+            vec4 tMap = texture2D(uMap, fract(vUv + uTime));
+            vec4 t2 = texture2D(uTexture2, vUv);
 
             float r1 = texture2D(uTexture1, vUv + wave * 0.09).r; // turn pink
             float g1 = texture2D(uTexture1, vUv + wave * 0.02).g;
             float b1 = texture2D(uTexture1, vUv + wave * 0.1).b;
 
-            float r2 = texture2D(uTexture2, vUv + wave * 0.09).r; // red
-            float g2 = texture2D(uTexture2, vUv + wave * 0.04).g;
-            float b2 = texture2D(uTexture2, vUv + wave * 0.06).b;
-
             vec4 t1 = vec4(r1, g1, b1, 1.);
-            vec4 t2 = vec4(r2, g2, b2, 1.);
+
+            vec4 mix2 = mix(
+                t2, 
+                vec4(tMap.rgb * (vWave + 1.), 1.),  // lighten the tMap texture
+                step( 0.6,  dot(tMap.rgb , vec3(1.0)) * (vWave  + 0.05) )
+            );
 
             vec4 c1 = toRgb(vec4(216., 76., 21., 1.)); // orange
             vec4 c2 = toRgb(vec4(69., 0., 247., 1.)); // violet
 
             vec4 texture = mix(
-                mix(t1, c1, smoothstep(-0.05, 0., vWave)), 
-                mix(c2, t2, smoothstep(0., 0.05, vWave)), 
-                step(0., vWave)
+                mix(t1, c1, smoothstep(line - lineEdge, line, vWave)), 
+                mix(c2, mix2, smoothstep(line, line + lineEdge, vWave)), 
+                step(line, vWave)
             );
 
             gl_FragColor = texture;

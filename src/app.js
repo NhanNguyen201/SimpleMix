@@ -1,8 +1,9 @@
 import * as THREE from 'three'
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-import image1 from '/thy_4i_1.jpg'
-import image2 from '/thy_4i_2.jpg'
+import image1 from '/img2.jpg'
+import image2 from '/img3.jpg'
+import star from '/star.jpg'
 
 import waveImgShader from './glsl/waveImage';
 
@@ -79,6 +80,7 @@ export default class App {
                 uniforms: {
                     uTexture1: { type: "sample2D", value: new THREE.TextureLoader().load(image1) },
                     uTexture2: { type: "sample2D", value: new THREE.TextureLoader().load(image2) },
+                    uMap: { type: "sample2D", value: new THREE.TextureLoader().load(star) },
                     uTime: { type: 'float', value: 0.0 }
                 },
                 side: THREE.DoubleSide
