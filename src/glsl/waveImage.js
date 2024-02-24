@@ -63,10 +63,19 @@ export default {
 
             vec4 t1 = vec4(r1, g1, b1, 1.);
 
+            // image in the star
+            vec4 mix1 = mix(
+                vec4(tMap.rgb * (vWave + 1.5), 1.),  // lighten the tMap texture
+                t2, 
+                step( 0.4,  dot(tMap.rgb , vec3(1.0)) * vWave * length(tMap.rg * tMap.gb * tMap.br) )
+            );
+
+
+            // vWave over 0. 
             vec4 mix2 = mix(
                 t2, 
-                vec4(tMap.rgb * (vWave + 1.), 1.),  // lighten the tMap texture
-                step( 0.6,  dot(tMap.rgb , vec3(1.0)) * (vWave  + 0.05) )
+                mix1,  
+                step( 0.6,  dot(tMap.rgb , vec3(1.0)) * (vWave  + 0.15) )
             );
 
             vec4 c1 = toRgb(vec4(216., 76., 21., 1.)); // orange
